@@ -1,0 +1,312 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block title %}Выбор опыта{% endblock %}
+
+{% block content %}
+
+<link  rel="stylesheet">
+    <dvi class="step-row">
+            <div id="progress" class="step{{ step }}"></div>
+            <div class="step-col"><small>1 Шаг</small></div>
+            <div class="step-col"><small>2 Шаг</small></div>
+            <div class="step-col"><small>3 Шаг</small></div>
+    </dvi>
+    <form method="post" action="{% url 'index' %}" onsubmit="return validateForm()">
+        {% csrf_token %}
+        {% if step == 1 %}
+        
+        <div id="input1">
+            <h3>Введите последние 3 релевантных опыта</h3>
+            <div class="form-control">
+                <h3>Введите первый опыт</h3>
+                <select id="searchInput_1" name="previous_job_selection_1" class="js-example-basic-single label">
+                    <option value="" disabled selected></option>
+                    {% for profession in professions %}
+                        <option value="{{ profession.id_profession }}"> {{ profession.name_profession }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="additionalInputs"></div>
+            <button class="button button-next" type="submit">Отправить</button>
+        </div>
+
+
+          
+
+        {% elif step == 4 %}
+        <div id="input4">
+            <input type="hidden" name="step" value="4">
+            {% for profession in selected_professions %}
+                <div class="profession-container" >
+                    <h3>{{ profession }}</h3>
+                    <input type="hidden" name="profession_id[]" value="{{ profession }}">
+                    <div class="date-inputs" style="display: flex;">
+                        <div style="flex: 1; text-align: right;">
+                            <div class="date-label">С какого даты:</div>
+                            <input type="date" class="form-control" name="start_date_{{ profession }}" placeholder="Start Date">
+                        </div>
+                        <div style="flex: 1; text-align: left;">
+                            <div class="date-label">По какое даты:</div>
+                            <input type="date" class="form-control" name="end_date_{{ profession }}" placeholder="End Date">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <button type="submit" id="searchInput_4">Отправить</button>
+        </div>
+
+        
+        
+        
+        {% elif step == 2 %}
+        {% csrf_token %}
+        <div id="input2">
+            <h3>Выберите желаемую работу</h3>
+            <input type="hidden" name="step" value="{{ step }}">
+                <div class="form-control">
+                    <h3>Введите первую профессию</h3>
+                    <select id="searchInput_2" name="previous_job_selection_1" class="js-example-basic-single label">
+                        <option value="" disabled selected></option>
+                        {% for profession in professions %}
+                            <option value="{{ profession.id_profession }}"> {{ profession.name_profession }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            <div id="additionalInputs"></div>
+            
+            <button class="button button-next" href="/?step=3" >Отправить</button>
+        </div>
+ 
+        
+        {% elif step == 3 %}
+        {% csrf_token %}
+        <div id="input3">
+            <h3>Что умеете</h3>
+            <input type="hidden" name="step" value="{{ step }}">
+            <div class="form-control">
+                <select id="searchInput" name="future_job_selection" class="js-example-basic-single label">
+                    <option value="" selected disabled>Выберите навык</option>
+                    {% for skill in skills_filtered %}
+                    <option value="{{ skill.id_skill }}"> {{ skill.name_skill }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="add-button">
+                <button class="button button-next" type="button" id="add-button">Добавить</button>
+            </div>
+            <div class="skill-list-conteiner">
+                <ul id="list-container">
+                </ul>
+            </div>
+            <div class="btn-box" style="flex-direction: column; display: flex;" >
+                <a class="button button-next" id="Back2"  href="/?step=2" >Назад</a>
+                <button class="button button-next" type="submit" id="submit-button">Отправить</button>
+                <p id="error-message-skill" style="color: red; display: none;">Пожалуйста, выберите навык</p>
+            </div>
+        </div>
+        {% endif %}
+        <!-- <input type="text" id="skill_list" name="skills_list" style="visibility: hidden" /> -->
+
+            
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="{% static 'main/js/file.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#submit-button').click(function() {
+                if ($('#list-container').children().length === 0) {
+                    $('#error-message-skill').show();
+                } else {
+                    $('#error-message-skill').hide();
+                    $('#Form1').submit();
+                }
+            });
+        });
+    </script>
+    
+    
+
+    <script>
+        // Удаление навыка из списка и из cookie
+        $(document).on('click', '.remove-button', function() {
+            var skillId = $(this).attr('data-skill-id');
+            $(this).parent().remove(); // Удаление элемента из списка на странице
+
+            // Удаление навыка из cookie
+            var skillList = JSON.parse(getCookie('skillList') || '[]');
+            var updatedSkillList = skillList.filter(function(skill) {
+                return skill.id !== skillId;
+            });
+                document.cookie = 'skillList=' + JSON.stringify(updatedSkillList); // Обновление cookie
+            });
+
+            // Функция для получения значения cookie по имени
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+
+            // Получение содержимого cookie и добавление в список навыков
+        $(document).ready(function() {
+            var skillList = JSON.parse(getCookie('skillList') || '[]');
+            skillList.forEach(function(skill) {
+                $('#list-container').append('<li data-skill-id="' + skill.id + '">' + skill.name + ' <button class="remove-button" data-skill-id="' + skill.id + '">Удалить</button></li>');
+            });
+        });
+    </script>
+
+    
+
+    
+    <!-- Скрипты для step1 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#searchInput_1').change(function(){
+                if ($(this).val() !== '') {
+                    if ($('#additionalInputs').find('.form-control').length < 1) {
+                        // Добавить новый элемент только если существует менее двух дополнительных опытов
+                        $('#additionalInputs').append('<div class="form-control"><h3>Введите второй опыт</h3><select id="searchInput_1_1" name="previous_job_selection_2" class="js-example-basic-single label"><option value="" disabled selected></option>{% for profession in professions %}<option value="{{ profession.id_profession }}">{{ profession.name_profession }}</option>{% endfor %}</select></div>');
+                    }
+                }
+            });
+
+            $(document).on('change', '#searchInput_1_1', function(){
+                if ($(this).val() !== '') {
+                    if ($('#additionalInputs').find('.form-control').length < 2) {
+                        // Добавить новый элемент только если существует менее трех дополнительных опытов
+                        $('#additionalInputs').append('<div class="form-control"><h3>Введите третий опыт</h3><select id="searchInput_1_2" name="previous_job_selection_3" class="js-example-basic-single label"><option value="" disabled selected></option>{% for profession in professions %}<option value="{{ profession.id_profession }}">{{ profession.name_profession }}</option>{% endfor %}</select></div>');
+                    }
+                }
+            });
+        });
+
+    </script>
+    <script>
+        function validateForm() {
+            var selectedValue = document.getElementById('searchInput_1').value;
+            if (selectedValue === '') {
+                alert('Please select a value for the first job experience.');
+                return false; // Prevent the form from being submitted
+            }
+            return true; // Allow the form to be submitted
+        }
+    </script>
+    <script>
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        function removeEmptyStringsFromArray(arr) {
+            return arr.filter(function(element) {
+                return element.trim() !== ''; // Filter out empty strings
+            });
+        }
+
+        if (document.getElementById('searchInput_1')) {    
+            document.querySelector('form').addEventListener('submit', function(event) {
+                var selectedProfessions = [];
+                var selectInputs = document.querySelectorAll('select');
+
+                selectInputs.forEach(function(select) {
+                    var selectedProfessionText = select.options[select.selectedIndex].text;
+                    selectedProfessions.push(selectedProfessionText);
+                });
+
+                selectedProfessions = removeEmptyStringsFromArray(selectedProfessions); // Remove empty strings
+                setCookie('selected_professions', JSON.stringify(selectedProfessions), 30); // Save the value in the cookie for 30 days
+            });
+        }
+    </script>
+
+        <!-- Скрипты для step2 -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('#searchInput_2').change(function(){
+                    if ($(this).val() !== '') {
+                        if ($('#additionalInputs').find('.form-control').length < 1) {
+                            $('#additionalInputs').append('<div class="form-control"><h3>Выберете вторую профессию</h3><select id="searchInput_2_1" name="previous_job_selection_2" class="js-example-basic-single label"><option value="" disabled selected></option>{% for profession in professions %}<option value="{{ profession.id_profession }}">{{ profession.name_profession }}</option>{% endfor %}</select></div>');
+                        }
+                    }
+                });
+        
+                $(document).on('change', '#searchInput_2_1', function(){
+                    if ($(this).val() !== '') {
+                        if ($('#additionalInputs').find('.form-control').length < 2) {
+                            $('#additionalInputs').append('<div class="form-control"><h3>Выберете третью профессию</h3><select id="searchInput_2_2" name="previous_job_selection_3" class="js-example-basic-single label"><option value="" disabled selected></option>{% for profession in professions %}<option value="{{ profession.id_profession }}">{{ profession.name_profession }}</option>{% endfor %}</select></div>');
+                        }
+                    }
+                });
+            });
+        </script>
+        <script>
+            function validateForm() {
+                var selectedValue = document.getElementById('searchInput_2').value;
+                if (selectedValue === '') {
+                    alert('Please select a value for the first job experience.');
+                    return false; // Prevent the form from being submitted
+                }
+                return true; // Allow the form to be submitted
+            }
+        </script>
+        <script>
+            function setCookie(name, value, days) {
+                var expires = "";
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + value + expires + "; path=/";
+                }
+            if (document.getElementById('searchInput_2')) {    
+                document.querySelector('form').addEventListener('submit', function(event) {
+                var selectedProfessions = [];
+                var selectInputs = document.querySelectorAll('select');
+    
+                selectInputs.forEach(function(select) {
+                    var selectedProfessionText = select.options[select.selectedIndex].text;
+                    selectedProfessions.push(selectedProfessionText);
+                });
+                
+                setCookie('selected_professions_2', JSON.stringify(selectedProfessions), 30); // Сохраняем значение в cookie на 30 дней
+                });
+            }
+        </script>
+    
+    <!-- Скрипты для step4 -->
+    <script>
+        if (document.getElementById('searchInput_4')) {    
+            document.querySelector('form').addEventListener('submit', function(event) {
+                var professionInputs = document.querySelectorAll('.profession-container');
+                var dataToStore = [];
+
+                professionInputs.forEach(function(input) {
+                    var professionId = input.querySelector('[name^="profession_id"]').value;
+                    var startDate = input.querySelector('[name^="start_date"]').value;
+                    var endDate = input.querySelector('[name^="end_date"]').value;
+
+                    // Сохраняем данные в массив
+                    dataToStore.push(professionId + '|' + startDate + '|' + endDate);
+                });
+
+                // Сериализуем массив в JSON и сохраняем его в cookie
+                setCookie('profession_dates', JSON.stringify(dataToStore), 30); // Сохраняем значение в cookie на 30 дней
+            });
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script> -->
+    <script src="{% static 'main/js/file.js' %}"></script>
+
+{% endblock %}

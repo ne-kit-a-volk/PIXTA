@@ -1,0 +1,38 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Выбор профессии{% endblock %}
+
+{% block content %}
+    <div class="background">
+        <canvas id="canvas"></canvas>
+    </div>
+    <h1>Добро пожаловать</h1>
+    <form id="Form1" method="post">
+        {% csrf_token %}
+        <h3>Ваша индивидуальная траектория</h3>
+        <div class="form-control">
+            <label for="text" id="">Моя позиция на рынке</label>
+            <div class="btn-box">
+                <a href="{% url 'user_graph' %}" target="_blank">
+                    <button class="button-in-result" type="button" id="Next1" >Получить граф</button>
+                </a>
+            </div>
+        </div>
+        <div class="form-control">
+            <label for="text" id="">Посмотреть дорожную карту</label>
+            <div class="btn-box">
+                <a href="/user_roadmap" id="PDFBLANK" target="_blank">
+                  <button class="button-in-result" type="button" id="Next1">Посмотреть</button>
+                </a>
+            </div>
+        </div>
+        <div class="form-control">
+            <label for="text" id="">Получить дорожную карту pdf</label>
+            <div class="btn-box">
+                <a href="/gantt-chart" id="PDFBLANK" target="_blank">
+                    <button class="button-in-result" type="button" id="Next1">Получить</button>
+                  </a>
+            </div>
+        </div>
+      </form>
+{% endblock %}

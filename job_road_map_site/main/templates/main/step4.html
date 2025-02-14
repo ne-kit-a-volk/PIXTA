@@ -1,0 +1,18 @@
+{% elif step == 4 %}
+<div id="input4">
+    <div class="form-group">
+        {% for profession in selected_professions %}
+            <label>ID: {{ profession.id }}, name: {{ profession.name }}</label>
+            <div class="row">
+                <div class="col-6">
+                    <label for="start-date-{{ profession.id }}">Начало работы:</label>
+                    <input type="date" class="form-control" id="start-date-{{ profession.id }}">
+                </div>
+                <div class="col-6">
+                    <label for="end-date-{{ profession.id }}">Конец работы:</label>
+                    <input type="date" class="form-control" id="end-date-{{ profession.id }}">
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

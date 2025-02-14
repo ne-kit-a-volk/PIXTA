@@ -1,0 +1,21 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<html>
+<head>
+    <style type="text/css">
+        body {
+            background-color: red;
+        }
+    </style>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id='divPlotly' ></div>
+    <script>
+        let fig = {{ fig_json|safe }};
+        Plotly.react('divPlotly', fig.data, fig.layout);
+    </script>
+</body>
+</html>
+{% endblock %}

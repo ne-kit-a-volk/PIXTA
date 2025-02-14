@@ -1,0 +1,158 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cdbootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cdbootstrap/css/cdb.min.css" />
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+    
+</head>
+<style>
+    body, html {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    ul li {
+        top: 0;
+    }
+</style>
+<style>
+  .container {
+    display: flex;
+    justify-content: space-between;
+  }
+  .column {
+    flex: 1;
+    margin: 0 10px;
+  }
+  .row {
+    margin-bottom: 10px;
+  }
+</style>
+<body>
+    <div class="wrapper">
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 border-bottom z-1 bg-white b">
+      <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none ps-3">
+        <h1>Pichta</h1>
+      </a>
+      <ul class="nav col-12 col-md-auto mb-2 justify-content-center d-flex align-items-center mb-md-0">
+        <li><a href="/" class="nav-link px-2">Главная страница</a></li>
+        <li><a href="#" class="nav-link px-2" >FAQs</a></li>
+        <li><a href="#" class="nav-link px-2">О нас</a></li> 
+        <li><a href="/personal_account" class="nav-link px-2" >Личный кабинет</a></li>
+ 
+              
+      </ul>
+
+      <div class="col-md-3 text-end pe-3">
+        <h1>Account</h1>
+      </div>
+    </header>
+
+    <!-- Left Menu -->
+<div id="left-menu" class="left-menu flex-shrink-0 p-3  position-fixed" >
+    <ul class="list-unstyled ps-0">
+    
+      <li class="mb-1">
+        {% if request.COOKIES.1selected_professions and request.COOKIES.1selected_professions_2 and request.COOKIES.1skillList %}
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+            Вопросы <i class="fa fa-check text-success checkmark"></i>
+        </button>
+        {% else %}
+            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+              
+                Вопросы
+            </button>
+        {% endif %}
+        <div class="collapse" id="home-collapse">
+          <!-- <link rel="stylesheet" type="text/css" href="main/css/style.css"> -->
+
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              {% if request.COOKIES.1selected_professions %}
+                  <li><a href="?step=1" class="link-dark rounded">Шаг 1 <i class="fa fa-check text-success checkmark"></i></a></li>
+              {% else %}
+                  <li><a href="/?step=1" class="link-dark rounded">Шаг 1</a></li>
+              {% endif %}
+          
+              {% if request.COOKIES.1selected_professions_2 %}
+                  <li><a href="/?step=2" class="link-dark rounded">Шаг 2 <i class="fa fa-check text-success checkmark"></i></a></li>
+              {% else %}
+                  <li><a href="/?step=2" class="link-dark rounded">Шаг 2</a></li>
+              {% endif %}
+          
+              {% if request.COOKIES.1skillList %}
+                  <li><a href="/?step=3" class="link-dark rounded">Шаг 3 <i class="fa fa-check text-success checkmark"></i></a></li>
+              {% else %}
+                  <li><a href="/?step=3" class="link-dark rounded">Шаг 3</a></li>
+              {% endif %}
+          </ul>
+
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+          Графы
+        </button>
+        <div class="collapse" id="dashboard-collapse" >
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="{% url 'user_graph' None %}" class="link-dark rounded">Граф пользователя</a></li>
+
+            <li><a href="#" class="link-dark rounded">Скачать граф</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+          Траетория
+        </button>
+        <div class="collapse  " id="orders-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="/user_roadmap" class="link-dark rounded">Диаграмма Грантта</a></li>
+            <li><a href="/gantt-chart" class="link-dark rounded">PDF формат</a></li>
+            <li><a href="/gantt-chart-to-excel" class="link-dark rounded">Excel формат</a></li>
+          </ul> 
+        </div>
+      </li>
+      
+    </ul>
+</div>
+
+    <div id="container-input" class="container-input border">
+        {% block content %}
+        {% endblock %}
+
+    </div>
+    <div id="container-graph" >
+      
+        
+          {% block sidebar %}
+          <!-- Блок с боковой панелью -->
+          {% endblock %}
+
+    </div>
+
+  
+</body>
+</html>

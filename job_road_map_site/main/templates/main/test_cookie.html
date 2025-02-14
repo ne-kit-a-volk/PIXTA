@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cookie Operations</title>
+</head>
+<body>
+
+<h2>Set Cookie</h2>
+<form action="{% url 'set_cookie' %}" method="post">
+    {% csrf_token %}
+    Cookie Name: <input type="text" name="cookie_name"><br>
+    Cookie Value: <input type="text" name="cookie_value"><br>
+    <input type="submit" value="Set Cookie">
+</form>
+
+<h2>Get Cookie</h2>
+<form action="{% url 'get_cookie' %}" method="get">
+    Cookie Name: <input type="text" name="cookie_name"><br>
+    <input type="submit" value="Get Cookie">
+</form>
+
+</body>
+</html>

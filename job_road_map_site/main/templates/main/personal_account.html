@@ -1,0 +1,47 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+{% block title %}Ваша персональная карта{% endblock %}
+<head>
+
+</head>
+{% block content %}
+<div class="scrolling-container"  style="overflow-y: auto; max-height: 100%;">
+    <div style="display: flex; flex-direction: column;">
+        <h1 style="font-size: 24px;">Ваша персональная карта</h1>
+        {% for prev_professions, start_date_index,end_date_index in date_work %}
+            <div>
+                <p style="font-size: 120%;"><u style="font-size: 120%;">Профессия</u>: {{ prev_professions }}</p>
+                <p style="font-size: 120%;"><u style="font-size: 120%;">Интервал работы</u>: {{ start_date_index }} - {{ end_date_index }}</p>
+            </div>
+        {% endfor %}
+        <a href="{% url 'index' %}?step=1" class="button-change-state">Изменить предыдущую работу</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column;">
+        <p style="font-size: 120%;"><u style="font-size: 120%;">Мой пол</u>: {{ sex }}</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column;">
+        <p style="font-size: 120%;"><u style="font-size: 120%;">Моя дата рождения</u>: {{ date_of_birth }}</p>
+    </div>
+
+    {% for fut_job_index,fut_job_name in fut_job %}
+    <div style="display: flex; flex-direction: row; align-items: center;">
+        <p style="font-size: 120%; margin-right: 10px;"><u style="font-size: 120%;">Желаемая работа</u>: {{ fut_job_name }} <a href="{% url 'user_graph' fut_job_index %}">Ссылка на граф</a> </p>
+        
+    </div>
+    
+    {% endfor %}
+    <a href="{% url 'index' %}?step=2" class="button-change-state">Изменить желаемую работу</a>
+    <div style="display: flex; flex-direction: column;">
+        <p style="font-size: 120%;"><u style="font-size: 120%;">Ваши навыки</u>: {{ skillList }}</p>
+        <a href="{% url 'index' %}?step=3" class="button-change-state">Изменить навыки</a>
+    </div>
+    <div style="display: flex; flex-direction: column;">
+        <p style="font-size: 120%;"><u style="font-size: 120%;">Обо мне</u>: {{ about_me }}</p>
+        <a href="#" class="button-change-state">Изменить информацию</a>
+    </div>
+</div>
+{% endblock %}
+
+
